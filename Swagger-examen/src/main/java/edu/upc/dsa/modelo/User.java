@@ -21,13 +21,37 @@ public class User {
         this.idUser = idUser;
         this.name = name;
         this.surname = surname;
-        this.bikesFromUser = bikesFromUser;
+        this.bikesFromUser = new LinkedList<>();
     }
 
     public LinkedList<Bike> getBikesFromUser() {
         return bikesFromUser;
     }
     public void addBike(Bike b){
-        this.getBikesFromUser().add(b);
+        this.bikesFromUser.add(b);
+    }
+
+    public void setIdUser(String idUser) {
+        this.idUser = idUser;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public void setBikesFromUser(LinkedList<Bike> bikesFromUser) {
+        this.bikesFromUser = bikesFromUser;
     }
 }

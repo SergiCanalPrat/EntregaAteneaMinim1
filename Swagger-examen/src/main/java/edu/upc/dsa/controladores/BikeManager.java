@@ -1,5 +1,8 @@
 package edu.upc.dsa.controladores;
 
+import edu.upc.dsa.exceptions.StationFullException;
+import edu.upc.dsa.exceptions.StationNotFoundException;
+import edu.upc.dsa.exceptions.UserNotFoundException;
 import edu.upc.dsa.modelo.Bike;
 import edu.upc.dsa.modelo.Station;
 import edu.upc.dsa.modelo.User;
@@ -45,7 +48,7 @@ public interface BikeManager {
          * @param idStation identifier of the station
 
          */
-        public void addBike(String idBike, String description, double kms, String idStation);
+        public void addBike(String idBike, String description, double kms, String idStation) throws StationFullException, StationNotFoundException;
 
 
         /**
@@ -55,7 +58,7 @@ public interface BikeManager {
          * @return list of bikes
 
          */
-        public List<Bike> bikesByStationOrderByKms(String idStation);
+        public List<Bike> bikesByStationOrderByKms(String idStation) throws StationNotFoundException;
 
         /**
          * get the first Bike of the station
@@ -63,8 +66,8 @@ public interface BikeManager {
          * @param idStation identifier of the station
          * @param userId identifier of the user
          * @return the first bike of the station
-
-        public Bike getBike(String stationId, String userId);
+        */
+        public Bike getBike(String idStation, String userId) throws UserNotFoundException, StationNotFoundException;
 
         /**
          * get the bikes used by the user
@@ -72,7 +75,7 @@ public interface BikeManager {
          * @param userId identifier of the user
          * @return the list of bikes used by the user
          */
-        public List<Bike> bikesByUser(String userId);
+        public List<Bike> bikesByUser(String userId) throws UserNotFoundException;
 
 
         /**
@@ -95,7 +98,7 @@ public interface BikeManager {
          * @param idStation identifier of the station
          * @return the number of bikes of the station
          */
-        public int numBikes(String idStation) ;
+        public int numBikes(String idStation) throws StationNotFoundException;
 
         /**
          * clear all the data structures
@@ -104,7 +107,5 @@ public interface BikeManager {
 
         public Station getStationById(String stationId);
         public Map<String,User> getUsers();
+ }
 
-    }
-
-}

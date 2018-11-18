@@ -50,6 +50,7 @@
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-json-jackson</artifactId>
+            <scope>runtime</scope>
             <version>2.27</version>
         </dependency>
 

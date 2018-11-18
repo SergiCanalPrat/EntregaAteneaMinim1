@@ -2,6 +2,9 @@ package edu.upc.dsa.services;
 
 import edu.upc.dsa.controladores.BikeManager;
 import edu.upc.dsa.controladores.BikeManagerImpl;
+import edu.upc.dsa.exceptions.StationFullException;
+import edu.upc.dsa.exceptions.StationNotFoundException;
+import edu.upc.dsa.exceptions.UserNotFoundException;
 import edu.upc.dsa.modelo.Bike;
 import edu.upc.dsa.modelo.Station;
 import edu.upc.dsa.modelo.User;
@@ -25,69 +28,33 @@ public class BikeService {
     private BikeManager bm;
 
 
-    public BikeService(){
+    public BikeService() {
         this.bm = BikeManagerImpl.getInstance();
-
-
-        //Si el catalogo está vacio
-        if(bm.numUsers()==0 && bm.numStations()==0{
-            this.bm.addBike("BIK1","bici verde",23,"STA1");
-            this.bm.addBike("BIK2","bici azul",2.5,"STA2");
-            this.bm.addBike("BIK3","bici roja",9.3,"STA3");
-
-
-            this.bm.addUser( "A1",  "sergi",  "canal"));
-            List<Bike> bikes = new ArrayList<>();
-            bikes.add(this.bm.getBike("STA1", "US1"));
-            bikes.add(this.bm.getBike("STA2","US2"));
-            bikes.add(this.bm.getBike("STA3", "US3"));
-
-            Station station = new Station( "STA1",  "STAD1",  50,  43.09,  890.90);
-            Bike bike1 = new Bike("BIK1","bici verde",23,"STA1";
-            Bike bike2 = new Bike("BIK2","bici azul",2.5,"STA2";
-            Bike bike3 = new Bike("BIK3","bici roja",9.3,"STA3";
-
-            this.bm.getUsers().get(1).addBike(bike1);
-            this.bm.getUsers().get(2).addBike(bike2);
-            this.bm.getUsers().get(3).addBike(bike3);
-
-
-        }
     }
-
 
     //Get una bike
     @GET
-    @ApiOperation(value = "get una bike", notes = "Get de una bike")
+    @ApiOperation(value = "Get de una bike", notes = "Get de una bike pasando StationId y UserId")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successful", response = Bike.class),
-            @ApiResponse(code = 404, message = "Track not found")
+            @ApiResponse(code = 404, message = "Station not found"),
+            @ApiResponse(code = 405, message = "User not found")
     })
-    @Path("/{bikeId}")
+    @Path("/{stationId}/{userId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBike(@PathParam("bikeId") String stationId, String userId) {
-        Bike b = this.bm.getBike(stationId,userId);
-        if (b == null) return Response.status(404).build();
-        else  return Response.status(201).entity(b).build();
+    public Response getBike(@PathParam("stationId") String stationId,
+                            @PathParam("userId") String userId) {
+        try {
+            Bike b = this.bm.getBike(stationId,userId);
+            if (b == null)
+                return Response.status(404).build();
+            else
+                return Response.status(201).entity(b).build();
+        } catch (UserNotFoundException e) {
+            return Response.status(405).build();
+        } catch (StationNotFoundException e) {
+            return Response.status(404).build();
+        }
+
     }
-
-    //Get Bikes de un user
-    @GET
-    @ApiOperation(value = "get bikes de un user", notes = "Get bikes de un user")
-    @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Successful", response = Bike.class),
-            @ApiResponse(code = 404, message = "Track not found")
-    })
-    @Path("/{userId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getBikesByUser(@PathParam("userId") String userId) {
-        User u = this.bm.getUsers().get(userId);
-        List<Bike> listBikes= u.getBikesFromUser();
-        if (u == null) return Response.status(404).build();
-        else  return Response.status(201).entity(listBikes).build();
-    }
-
-
-
-
 }

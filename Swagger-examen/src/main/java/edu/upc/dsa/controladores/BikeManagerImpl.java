@@ -1,6 +1,9 @@
 package edu.upc.dsa.controladores;
 
 
+import edu.upc.dsa.exceptions.StationFullException;
+import edu.upc.dsa.exceptions.StationNotFoundException;
+import edu.upc.dsa.exceptions.UserNotFoundException;
 import edu.upc.dsa.modelo.Bike;
 import edu.upc.dsa.modelo.Station;
 import edu.upc.dsa.modelo.User;
@@ -10,19 +13,20 @@ import java.util.*;
 
 
 public class BikeManagerImpl implements BikeManager {
+
+
     private static BikeManagerImpl instance = null;
     final static Logger logger = Logger.getLogger(BikeManagerImpl.class);
     private HashMap<String, User> users;
     private ArrayList<Station> stations;
     private LinkedList<Bike> bikes;
+    private int numStations = S;
 
-
-    public BikeManagerImpl(HashMap<String, User> users, ArrayList<Station> stations, LinkedList<Bike> bikes) {
-        this.users = users;
-        this.stations = stations;
-        this.bikes = bikes;
+    public BikeManagerImpl() {
+        this.users = new HashMap<>();
+        this.stations = new ArrayList<>();
+        this.bikes = new LinkedList<>();
     }
-
 
 
     //Patron Singleton
@@ -46,35 +50,83 @@ public class BikeManagerImpl implements BikeManager {
     }
 
     //Afegir una bike
-    public void addBike(String idBike, String description, double kms, String idStation) {
-        Bike bike = new Bike(idBike,description,kms,idStation);
-        this.bikes.add(bike);
+    public void addBike(String idBike, String description, double kms, String idStation) throws StationFullException, StationNotFoundException{
+        Station station = this.getStationById(idStation);
+        if (station != null) {
+            if (station.getMax() > this.numBikes(idStation)) {
+                Bike bike = new Bike(idBike, description, kms, idStation);
+                this.getStationById(idStation).addBike(bike);
+            }
+            else
+                throw new StationFullException();
+        }
+        else
+            throw new StationNotFoundException();
+
     }
 
-    public List<Bike> bikesByStationOrderByKms(String idStation) {
-        logger.info("bikesByStationOrderByKms: ordenando las bikes por kms...");
-        logger.info("Lista sin ordenar: "+this.bikes.toString());
+    public List<Bike> bikesByStationOrderByKms(String idStation) throws StationNotFoundException {
 
-        //Ordena de menor a Mayor.
-        bikes.sort(Comparator.comparingDouble(Bike::getKms));
+        Station station = this.getStationById(idStation);
+        if (station != null) {
+            ArrayList<Bike> bikesList = station.getBikes();
+            logger.info("bikesByStationOrderByKms: ordenando las bikes por kms...");
+            logger.info("Lista sin ordenar: " + bikesList.toString());
 
-        logger.info("Lista ordenada: "+bikes);
-        return bikes;
+            //Ordena de menor a Mayor.
+            bikesList.sort(Comparator.comparingDouble(Bike::getKms));
+
+            logger.info("Lista ordenada: " + bikesList.toString());
+            return bikesList;
+        }
+        else
+            throw new StationNotFoundException();
     }
 
-    public Bike getBike(String stationId, String userId){
+    public Bike getBike(String stationId, String userId) throws UserNotFoundException, StationNotFoundException{
         //Buscamos la estacion, añadimos una bike al user y borramos la 1a bike de la estacion
-        logger.info("getBike: buscando la bike...");
-        Bike bike = this.getStationById(stationId).getBikes().get(0);
-        logger.info("getBike: añadiendo bike de la estacion al usuario...");
-        this.users.get(userId).addBike(bike);
-        return bike;
+
+        Station station = this.getStationById(stationId);
+        if (station != null && !station.getBikes().isEmpty()) {
+            User user = this.users.get(userId);
+            if (user != null) {
+                Bike bike = station.getBikes().remove(0);
+                user.addBike(bike);
+                return bike;
+            } else {
+                throw new UserNotFoundException();
+            }
+        } else
+            throw new StationNotFoundException();
+
+        /*
+        logger.info("getBike: buscando la estacion...");
+        Station station = this.getStationById(stationId);
+        Bike bike;
+        if (station != null && !station.getBikes().isEmpty()) {
+            logger.info("getBike: buscando la bike...");
+            bike = station.getBikes().get(0);
+        }
+        else
+            throw new StationNotFoundException();
+        User user = this.users.get(userId);
+        if (user != null){
+            logger.info("getBike: añadiendo bike de la estacion al usuario...");
+            user.addBike(bike);
+        }
+        else
+            throw new UserNotFoundException();
+        return bike;*/
     }
 
 
 
-    public List<Bike> bikesByUser(String userId) {
-        return this.users.get(userId).getBikesFromUser();
+    public LinkedList<Bike> bikesByUser(String userId) throws UserNotFoundException{
+        User user = this.users.get(userId);
+        if (user != null)
+            return user.getBikesFromUser();
+        else
+            throw new UserNotFoundException();
     }
 
     public int numUsers() {
@@ -85,23 +137,28 @@ public class BikeManagerImpl implements BikeManager {
         return this.stations.size();
     }
 
-    public int numBikes(String idStation)  {
-        return this.getStationById(idStation).getBikes().size();
+    public int numBikes(String idStation) throws StationNotFoundException {
+        Station station = this.getStationById(idStation);
+        if (station != null)
+            return station.getBikes().size();
+        else
+            throw new StationNotFoundException();
     }
 
 
-    private Station getStationById(String stationId){
-        logger.info("getBike: buscando estación...");
-        boolean found = false;
-        for(Station station : stations) {
-        if(station.getIdStation().equals(stationId)) {
-            found = true;
-            return station;
+    public Station getStationById(String stationId) {
+
+        for (int i = 0; i < stations.size(); i++) {
+            Station station = stations.get(i);
+            if (station.getIdStation().equals(stationId))
+                return station;
         }
-    }
-        if(!found)
-            logger.info("Station Not Found");
+
         return null;
+    }
+
+    public ArrayList<Station> getStations(){
+        return this.stations;
     }
 
     public Map<String,User> getUsers(){
@@ -115,10 +172,4 @@ public class BikeManagerImpl implements BikeManager {
         stations.clear();
         bikes.clear();
     }
-}
-
-
-
-
-
 }
