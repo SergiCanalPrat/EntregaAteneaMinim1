@@ -2,6 +2,11 @@ package edu.upc.dsa.modelo;
 
 public class Bike {
 
+    public Bike() {
+
+    }
+
+
     public String getIdBike() {
         return idBike;
     }

@@ -12,23 +12,16 @@ public class User {
     private String idUser;
     private String name;
     private String surname;
-    private LinkedList<Bike> bikesFromUser;
+    private List<Bike> bikesFromUser;
 
     //Si hacemos un servicio siempre añadir el constructor vacio!!!!
-    public User(){}
+    public User() {}
 
     public User(String idUser, String name, String surname) {
         this.idUser = idUser;
         this.name = name;
         this.surname = surname;
-        this.bikesFromUser = new LinkedList<>();
-    }
-
-    public LinkedList<Bike> getBikesFromUser() {
-        return bikesFromUser;
-    }
-    public void addBike(Bike b){
-        this.bikesFromUser.add(b);
+        this.bikesFromUser = new ArrayList<>();
     }
 
     public void setIdUser(String idUser) {
@@ -51,7 +44,15 @@ public class User {
         this.surname = surname;
     }
 
-    public void setBikesFromUser(LinkedList<Bike> bikesFromUser) {
+    public List<Bike> getBikesFromUser() {
+        return bikesFromUser;
+    }
+
+    public void addBike(Bike b){
+        this.bikesFromUser.add(b);
+    }
+
+    public void setBikesFromUser(List<Bike> bikesFromUser) {
         this.bikesFromUser = bikesFromUser;
     }
 }

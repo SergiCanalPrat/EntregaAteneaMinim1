@@ -36,7 +36,7 @@ public class BikeService {
     @GET
     @ApiOperation(value = "Get de una bike", notes = "Get de una bike pasando StationId y UserId")
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Successful", response = Bike.class),
+            @ApiResponse(code = 200, message = "Successful", response = Bike.class),
             @ApiResponse(code = 404, message = "Station not found"),
             @ApiResponse(code = 405, message = "User not found")
     })
@@ -49,7 +49,7 @@ public class BikeService {
             if (b == null)
                 return Response.status(404).build();
             else
-                return Response.status(201).entity(b).build();
+                return Response.status(200).entity(b).build();
         } catch (UserNotFoundException e) {
             return Response.status(405).build();
         } catch (StationNotFoundException e) {

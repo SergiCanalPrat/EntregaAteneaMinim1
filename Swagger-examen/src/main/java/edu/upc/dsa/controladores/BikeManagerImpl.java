@@ -83,7 +83,7 @@ public class BikeManagerImpl implements BikeManager {
             throw new StationNotFoundException();
     }
 
-    public Bike getBike(String stationId, String userId) throws UserNotFoundException, StationNotFoundException{
+    public Bike getBike(String stationId, String userId) throws UserNotFoundException, StationNotFoundException {
         //Buscamos la estacion, añadimos una bike al user y borramos la 1a bike de la estacion
 
         Station station = this.getStationById(stationId);
@@ -98,7 +98,6 @@ public class BikeManagerImpl implements BikeManager {
             }
         } else
             throw new StationNotFoundException();
-
         /*
         logger.info("getBike: buscando la estacion...");
         Station station = this.getStationById(stationId);
@@ -116,12 +115,13 @@ public class BikeManagerImpl implements BikeManager {
         }
         else
             throw new UserNotFoundException();
-        return bike;*/
+        return bike;
+        */
     }
 
 
 
-    public LinkedList<Bike> bikesByUser(String userId) throws UserNotFoundException{
+    public List<Bike> bikesByUser(String userId) throws UserNotFoundException{
         User user = this.users.get(userId);
         if (user != null)
             return user.getBikesFromUser();

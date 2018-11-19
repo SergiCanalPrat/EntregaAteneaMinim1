@@ -5,11 +5,17 @@ import java.util.List;
 
 public class Station {
 
+    public Station (){
+
+    }
+
+
     private String idStation;
     private int max;
     private String description;
     private double lat;
     private double lon;
+
 
     private ArrayList<Bike> bikes;
 

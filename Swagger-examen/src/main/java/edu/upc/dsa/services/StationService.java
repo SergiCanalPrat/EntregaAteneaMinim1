@@ -10,8 +10,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import jdk.jfr.ContentType;
 
+import javax.print.attribute.standard.Media;
 import javax.ws.rs.*;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
@@ -39,7 +39,7 @@ public class StationService {
             @ApiResponse(code = 201, message = "Successful", response= Station.class),
     })
     @Path("/")
-    @Consumes(APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response newStation(Station station) {
         this.bm.addStation(station.getIdStation(), station.getDescription(), station.getMax(), station.getLat(), station.getLon());
         return Response.status(201).entity(this.bm.getStationById(station.getIdStation())).build();
@@ -49,28 +49,28 @@ public class StationService {
     @GET
     @ApiOperation(value = "Get stations", notes = "Responde una lista con todas las estaciones")
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Successful", response = Station.class)
+            @ApiResponse(code = 200, message = "Successful", response = Station.class)
     })
     @Path("/")
-    @Produces(APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getStations() {
         ArrayList<Station> stations = this.bm.getStations();
         GenericEntity<List<Station>> entity = new GenericEntity<List<Station>>(stations){};
-        return Response.status(201).entity(entity).build();
+        return Response.status(200).entity(entity).build();
     }
 
     //Get todas las bikes de una estacion ordenadas por kms
     @GET
     @ApiOperation(value = "GetBikesByStationOrderByKms", notes = "Responde con todas las bikes de una estacion ordenadas por kms")
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Successful", response = Station.class),
+            @ApiResponse(code = 200, message = "Successful", response = Station.class),
             @ApiResponse(code = 404, message = "Station not found")
     })
     @Path("/{stationId}/bikes")
-    @Produces(APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getbikesByStationOrderByKms(@PathParam("stationId") String stationId) throws StationNotFoundException {
         List<Bike> bikes = this.bm.bikesByStationOrderByKms(stationId);
         GenericEntity<List<Bike>> entity = new GenericEntity<List<Bike>>(bikes){};
-        return Response.status(201).entity(entity).build();
+        return Response.status(200).entity(entity).build();
     }
 }

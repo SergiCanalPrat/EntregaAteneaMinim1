@@ -103,6 +103,7 @@ public class BikeManagerImplTest {
         Assert.assertEquals(70, bikes.get(2).getKms(),1);
     }
 
+    /*
     @Test
     public void testGetBikes() throws Exception {
 
@@ -120,6 +121,7 @@ public class BikeManagerImplTest {
         Assert.assertEquals("bike201", bikes.get(1).getIdBike());
 
     }
+    */
 
 
 }

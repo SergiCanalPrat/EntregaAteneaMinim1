@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
+import javax.print.attribute.standard.Media;
 import javax.ws.rs.*;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
@@ -32,25 +33,38 @@ public class UserService {
         this.bm = BikeManagerImpl.getInstance();
     }
 
+    @GET
+    @Path("juan/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public User juan() throws Exception {
+        User u = new User();
+        u.setName("juan");
+        u.setIdUser("id");
+        u.setSurname("Lopez");
+        return u;
+    }
+
+
     //Añadir un user
     @POST
     @ApiOperation(value = "Post user", notes = "Añade un user al mapa de users")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Successful", response=User.class),
     })
-
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response newUser(User user) {
         this.bm.getUsers().put(user.getIdUser(), user);
         return Response.status(201).entity(user).build();
     }
 
+
     //Get de todas las bikes de un user
     @GET
     @ApiOperation(value = "GetBikesByUser", notes = "Responde con todas las bikes de usuario")
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Successful", response = Station.class),
+            @ApiResponse(code = 200, message = "Successful", response = Station.class),
             @ApiResponse(code = 404, message = "Station not found")
     })
     @Path("/{userId}/bikes")
@@ -59,10 +73,11 @@ public class UserService {
         try {
             List<Bike> bikes = this.bm.bikesByUser(userId);
             GenericEntity<List<Bike>> entity = new GenericEntity<List<Bike>>(bikes){};
-            return Response.status(201).entity(entity).build();
+            return Response.status(200).entity(entity).build();
         } catch (UserNotFoundException e) {
             return Response.status(404).build();
         }
     }
+
 
 }

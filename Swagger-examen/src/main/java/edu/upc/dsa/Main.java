@@ -29,6 +29,7 @@ public class Main {
 
         rc.register(io.swagger.jaxrs.listing.ApiListingResource.class);
         rc.register(io.swagger.jaxrs.listing.SwaggerSerializers.class);
+        rc.register(edu.upc.dsa.exceptions.MyExceptionMapper.class);
 
         BeanConfig beanConfig = new BeanConfig();
 
